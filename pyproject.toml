@@ -1,4 +1,4 @@
-tool.poetry]
+[tool.poetry]
 name = "sports-image-classification"
 version = "0.1.0"
 description = "MLOps project for classification different sport images"
