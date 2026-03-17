@@ -74,10 +74,8 @@ sports-image-classification/
 ├── src/sports_classifier/ # Основной пакет
 │ ├── init.py
 │ ├── data_load/
-│ │ ├── init.py
 │ │ └── dataset.py # Дата-модуль и функция загрузки
 │ ├── models/
-│ │ ├── init.py
 │ │ └── model.py # LightningModule
 │ ├── scripts/
 │ │ └── predict.py # Клиент для инференса
