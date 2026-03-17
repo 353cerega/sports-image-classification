@@ -74,6 +74,5 @@ Thumbs.db
 wandb/
 
 # Specific
-plots/
 .hydra/
 mlflow.db
