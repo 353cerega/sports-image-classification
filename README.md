@@ -108,8 +108,18 @@ sports-image-classification/
     Получите токен на Kaggle (Account → Create API Token)
     Сохраните файл kaggle.json в ~/.kaggle/ и установите права:
    ```bash
+   mkdir -p ~/.kaggle
+   mv path/to/kaggle_json/kaggle.json ~/.kaggle/
    chmod 600 ~/.kaggle/kaggle.json
    ```
+
+## Запуск сервера MLflow
+
+```bash
+poetry run mlflow server --host 127.0.0.1 --port 8080
+```
+Затем откройте в браузере http://127.0.0.1:8080. Примеры графиков можно найти в папке plots/.
+
 ## Обучение модели
 
 Запуск обучения с параметрами по умолчанию (можно переопределить через командную строку):
@@ -121,14 +131,6 @@ poetry run python -m src.sports_classifier.train
 poetry run python -m src.sports_classifier.train train.max_epochs=5 data.batch_size=32
 ```
 Все параметры описаны в YAML-файлах папки configs/.
-
-## Логирование экспериментов
-
-Метрики автоматически сохраняются в MLflow. Для просмотра запустите сервер UI:
-```bash
-poetry run mlflow ui
-```
-Затем откройте в браузере http://127.0.0.1:5000. Примеры графиков можно найти в папке plots/.
 
 ## Подготовка модели к продакшену (Конвертация в ONNX)
 
@@ -152,7 +154,7 @@ poetry run mlflow models serve -m mlflow_model -p 5001 --no-conda
 ```
 Отправка запроса:
 ```bash
-poetry run python -m src.sports_classifier.scripts.predict /путь/к/изображению.jpg
+poetry run python -m src.sports_classifier.scripts.predict /path/to/image.jpg
 # пример
 # poetry run python -m src.sports_classifier.scripts.predict data/test/football/5.jpg
 ```

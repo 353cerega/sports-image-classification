@@ -7,7 +7,7 @@ import requests
 from PIL import Image
 from torchvision import transforms
 
-from src.sports_classifier.data.dataset import SportsDataModule
+from src.sports_classifier.data_load.dataset import SportsDataModule
 
 sys.path.append(str(Path(__file__).parent))
 
