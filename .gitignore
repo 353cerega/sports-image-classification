@@ -23,8 +23,9 @@ poetry.lock
 .ipynb_checkpoints/
 *.ipynb
 
-# Data (не коммитим данные)
+# Data
 data/
+!configs/data/
 *.csv
 *.h5
 *.hdf5
