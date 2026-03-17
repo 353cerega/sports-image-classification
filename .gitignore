@@ -1,19 +1,13 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
+
+# Virtual environments
 env/
 venv/
 .env
 .venv
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.egg-info/
-dist/
-build/
 
 # Poetry
 poetry.lock
@@ -23,19 +17,13 @@ poetry.lock
 .ipynb_checkpoints/
 *.ipynb
 
-# Data
-data/
+# Data (игнорируем только корневую data, но не configs/data)
+/data/
 !configs/data/
-*.csv
-*.h5
-*.hdf5
-*.parquet
-*.feather
-*.pickle
-*.pkl
 
-# Models
-models/
+# Model artifacts
+/models/
+!src/sports_classifier/models/
 *.pth
 *.ckpt
 *.onnx
@@ -55,10 +43,8 @@ outputs/
 multirun/
 
 # DVC
-.dvc/tmp
-.dvc/cache
-**/.dvc/tmp
-**/.dvc/cache
+.dvc/
+**/.dvc/
 
 # IDE
 .vscode/

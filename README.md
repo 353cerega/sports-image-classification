@@ -28,8 +28,8 @@
 
 ## Источник данных
 
-Датасет доступен по ссылке:  
-[https://www.kaggle.com/datasets/gpiosenka/sports-classification](https://www.kaggle.com/datasets/gpiosenka/sports-classification)  
+Датасет доступен по ссылке:
+[https://www.kaggle.com/datasets/gpiosenka/sports-classification](https://www.kaggle.com/datasets/gpiosenka/sports-classification)
 Загрузка происходит автоматически при первом запуске обучения через Kaggle API (требуется токен).
 
 ## Моделирование
@@ -102,8 +102,7 @@ sports-image-classification/
    ```bash
    pip install poetry
    poetry install
-   poetry shell
-   pre-commit install
+   poetry run pre-commit install
    ```
 3. **Настройка Kaggle API (для скачивания датасета)**
     Получите токен на Kaggle (Account → Create API Token)
