@@ -1,13 +1,15 @@
-import requests
-import numpy as np
-from PIL import Image
-from torchvision import transforms
 import argparse
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent))
+import numpy as np
+import requests
+from PIL import Image
+from torchvision import transforms
+
 from src.sports_classifier.data.dataset import SportsDataModule
+
+sys.path.append(str(Path(__file__).parent))
 
 
 def load_class_names(data_dir="data"):
@@ -18,18 +20,21 @@ def load_class_names(data_dir="data"):
 
 
 def preprocess_image(image_path, image_size=224):
-    img = Image.open(image_path).convert('RGB')
-    transform = transforms.Compose([
-        transforms.Resize(int(image_size * 1.14)),
-        transforms.CenterCrop(image_size),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225])
-    ])
+    img = Image.open(image_path).convert("RGB")
+    transform = transforms.Compose(
+        [
+            transforms.Resize(int(image_size * 1.14)),
+            transforms.CenterCrop(image_size),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
     return transform(img).unsqueeze(0).numpy()
 
 
-def predict_image(image_path, server_url="http://127.0.0.1:5001/invocations", data_dir="data"):
+def predict_image(
+    image_path, server_url="http://127.0.0.1:5001/invocations", data_dir="data"
+):
     """Отправляет изображение на сервер и выводит предсказание."""
     try:
         class_names = load_class_names(data_dir)
@@ -50,7 +55,10 @@ def predict_image(image_path, server_url="http://127.0.0.1:5001/invocations", da
     try:
         response = requests.post(server_url, json=payload)
     except requests.exceptions.ConnectionError:
-        print("Ошибка подключения к серверу. Убедитесь, что MLflow сервер запущен (poetry run mlflow models serve -m mlflow_model -p 5001 --no-conda)")
+        print(
+            "Ошибка подключения к серверу. Убедитесь, что MLflow сервер запущен\
+        (poetry run mlflow models serve -m mlflow_model -p 5001 --no-conda)"
+        )
         return
 
     if response.status_code != 200:
@@ -58,8 +66,8 @@ def predict_image(image_path, server_url="http://127.0.0.1:5001/invocations", da
         return
 
     result = response.json()
-    if isinstance(result, dict) and 'predictions' in result:
-        predictions = result['predictions'][0]
+    if isinstance(result, dict) and "predictions" in result:
+        predictions = result["predictions"][0]
     elif isinstance(result, list):
         predictions = result[0]
     else:
@@ -71,7 +79,11 @@ def predict_image(image_path, server_url="http://127.0.0.1:5001/invocations", da
     predicted_idx = int(np.argmax(predictions))
     confidence = float(np.max(probabilities))
 
-    predicted_class = class_names[predicted_idx] if predicted_idx < len(class_names) else f"класс {predicted_idx}"
+    predicted_class = (
+        class_names[predicted_idx]
+        if predicted_idx < len(class_names)
+        else f"класс {predicted_idx}"
+    )
     print(f"\nПредсказанный класс: {predicted_class}")
     print(f"Уверенность: {confidence:.4f}")
 
@@ -83,11 +95,15 @@ def predict_image(image_path, server_url="http://127.0.0.1:5001/invocations", da
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Predict sport from image using MLflow server")
+    parser = argparse.ArgumentParser(
+        description="Predict sport from image using MLflow server"
+    )
     parser.add_argument("image_path", help="Path to the image file")
     parser.add_argument("--port", type=int, default=5001, help="MLflow server port")
     parser.add_argument("--host", default="127.0.0.1", help="MLflow server host")
-    parser.add_argument("--data_dir", default="data", help="Data directory (to load class names)")
+    parser.add_argument(
+        "--data_dir", default="data", help="Data directory (to load class names)"
+    )
     args = parser.parse_args()
 
     server_url = f"http://{args.host}:{args.port}/invocations"

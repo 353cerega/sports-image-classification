@@ -1,10 +1,10 @@
 import hydra
-from omegaconf import DictConfig
 import pytorch_lightning as pl
+from omegaconf import DictConfig
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.loggers import MLFlowLogger
-from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 
-from src.sports_classifier.data.dataset import SportsDataModule
+from src.sports_classifier.data_load.dataset import SportsDataModule
 from src.sports_classifier.models.model import SportsClassifier
 
 
