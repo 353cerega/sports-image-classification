@@ -25,7 +25,6 @@ def save_mlflow_model(
     """
     Загружает модель из чекпоинта и сохраняет в формате MLflow.
     """
-    # Проверка существования выходной папки
     if output_dir.exists() and any(output_dir.iterdir()):
         if force:
             print(f"Папка {output_dir} уже существует и не пуста. Удаляем (--force).")
@@ -38,29 +37,38 @@ def save_mlflow_model(
 
     print(f"Загрузка чекпоинта: {checkpoint_path}")
 
-    model = SportsClassifier.load_from_checkpoint(checkpoint_path)
+    inference_device = torch.device("cpu")
+    model = SportsClassifier.load_from_checkpoint(
+        checkpoint_path, map_location=inference_device
+    )
+    model.to(inference_device)
     model.eval()
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
     class ModelWrapper(mlflow.pyfunc.PythonModel):
-        def __init__(self, model):
+        def __init__(self, model, device):
             self.model = model
+            self.device = device
 
         def predict(self, context, input_data):
             import numpy as np
 
             with torch.no_grad():
                 if isinstance(input_data, np.ndarray):
-                    input_tensor = torch.tensor(input_data, dtype=torch.float32)
+                    input_tensor = torch.tensor(
+                        input_data, dtype=torch.float32, device=self.device
+                    )
                 else:
-                    input_tensor = torch.tensor(input_data, dtype=torch.float32)
+                    input_tensor = torch.tensor(
+                        input_data, dtype=torch.float32, device=self.device
+                    )
                 outputs = self.model(input_tensor)
-                return outputs.numpy()
+                return outputs.cpu().numpy()
 
     mlflow.pyfunc.save_model(
         path=str(output_dir),
-        python_model=ModelWrapper(model),
+        python_model=ModelWrapper(model, inference_device),
         artifacts={},
         conda_env=None,
     )

@@ -23,16 +23,17 @@ def convert_to_onnx(checkpoint_path: Path, output_dir: Path = Path("models")):
     """
     print(f"Загрузка чекпоинта: {checkpoint_path}")
 
-    # Загружаем модель (гиперпараметры восстанавливаются автоматически)
-    model = SportsClassifier.load_from_checkpoint(checkpoint_path)
+    export_device = torch.device("cpu")
+    model = SportsClassifier.load_from_checkpoint(
+        checkpoint_path, map_location=export_device
+    )
+    model.to(export_device)
     model.eval()
 
-    # Создаём выходную папку, если её нет
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "model.onnx"
 
-    # Фиксированный размер входного тензора (batch=1, 3, 224, 224)
-    dummy_input = torch.randn(1, 3, 224, 224)
+    dummy_input = torch.randn(1, 3, 224, 224, device=export_device)
 
     torch.onnx.export(
         model,
